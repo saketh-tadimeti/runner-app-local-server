@@ -1,0 +1,20 @@
+{
+  "name": "runner-app-local-server",
+  "version": "1.0.0",
+  "description": "A simple Express server with mock endpoints for local development.",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "npm-run-all --parallel dev:adb dev:nodemon",
+    "dev:adb": "adb reverse tcp:5000 tcp:5000 || true",
+    "dev:nodemon": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "npm-run-all": "^4.1.5"
+  }
+}

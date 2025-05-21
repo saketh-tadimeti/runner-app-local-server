@@ -1,0 +1,19 @@
+{
+  "statusCode": 200,
+  "statusMessage": "OK",
+  "data": {
+    "name": "Daudiyaal Kumar",
+    "runnerId": "237492",
+    "status": "online",
+    "hubManager": {
+      "name": "Manager Saab"
+    },
+    "workDetails": {
+      "startTime": "10:00 AM",
+      "endTime": "6:00 PM",
+      "address": "Tower 8, DLF Cyberhub, Gurgaon",
+      "lat": "12.01",
+      "long": "12.02"
+    }
+  }
+}
