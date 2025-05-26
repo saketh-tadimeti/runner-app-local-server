@@ -1,0 +1,7 @@
+{
+  "statusCode": 200,
+  "statusMessage": "OK",
+  "data": {
+    "message": "Role updated successfully"
+  }
+}

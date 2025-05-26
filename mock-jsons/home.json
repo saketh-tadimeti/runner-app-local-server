@@ -1,0 +1,19 @@
+{
+  "statusCode": 200,
+  "statusMessage": "OK",
+  "data": {
+    "status": "online",
+    "hub": {
+      "name": "Tower B, DLF Cyberhub",
+      "address": "Gurgaon, Haryana",
+      "location": {
+        "lat": 28.4975,
+        "lng": 77.0896
+      },
+      "operatingHours": {
+        "start": "08:00",
+        "end": "22:00"
+      }
+    }
+  }
+}
