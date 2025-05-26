@@ -1,0 +1,7 @@
+{
+    "statusCode": 200,
+    "statusMessage": "OK",
+    "data": {
+      "status": "online"
+    }
+}

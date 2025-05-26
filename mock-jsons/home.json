@@ -2,7 +2,7 @@
   "statusCode": 200,
   "statusMessage": "OK",
   "data": {
-    "status": "online",
+    "status": "offline",
     "hub": {
       "name": "Tower B, DLF Cyberhub",
       "address": "Gurgaon, Haryana",

@@ -163,6 +163,11 @@ app.get('/api/v1/runners/home', (req, res) => {
     res.json(response);
 });
 
+app.post('/api/v1/runners/duty/state', (req, res) => {
+    const response = loadMock('duty.json');
+    res.json(response);
+});
+
 // Receive Order endpoint
 app.post('/api/v1/runners/orders/receive', (req, res) => {
     const code = req.body.code || "000000";
