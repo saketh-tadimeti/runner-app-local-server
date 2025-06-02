@@ -1,0 +1,76 @@
+{
+  "totalOrders": 2,
+  "orders": [
+    {
+      "id": "order_assigned_1",
+      "status": "ORDER_STATUS_ASSIGNED",
+      "orderType": "FOOD",
+      "etaInSeconds": 350,
+      "receivedAt": 1715599481,
+      "assignedAt": 1715599600,
+      "pickedUpAt": 1715599720,
+      "pickupDetails": { "name": "Sandwich Hub" },
+      "isOFOOrder": true,
+      "customer": {
+        "name": "Ramesh",
+        "hasAlternateNumber": false,
+        "address": {
+          "line1": "JP Nagar",
+          "line2": "1st floor, A block",
+          "fullAddress": "JP Nagar, Bengaluru, Karnataka 560078, India",
+          "landmark": "Near Central Mall",
+          "location": { "latitude": 12.9406, "longitude": 77.7003 }
+        }
+      },
+      "items": [{ "name": "Veg Sandwich", "quantity": 2 }],
+      "deliveryPartner": { "name": "Suresh" },
+      "trackingDetails": {
+        "receiver": { "name": "Asha" },
+        "runner": { "name": "Ramesh" }
+      }
+    },
+    {
+      "id": "order_assigned_2",
+      "status": "ORDER_STATUS_PICKUP_DELAYED",
+      "orderType": "GROCERY",
+      "etaInSeconds": 500,
+      "receivedAt": 1715599581,
+      "assignedAt": 1715599700,
+      "pickedUpAt": 1715599820,
+      "pickupDetails": { "name": "Grocery King" },
+      "isOFOOrder": false,
+      "customer": {
+        "name": "Priya",
+        "hasAlternateNumber": true,
+        "address": {
+          "line1": "Whitefield",
+          "line2": "2nd floor, B block",
+          "fullAddress": "Whitefield, Bengaluru, Karnataka 560066, India",
+          "landmark": "Near ITPL",
+          "location": { "latitude": 12.9416, "longitude": 77.7013 }
+        }
+      },
+      "items": [{ "name": "Rice", "quantity": 1 }],
+      "deliveryPartner": { "name": "Kiran" },
+      "trackingDetails": {
+        "receiver": { "name": "Sunil" },
+        "runner": { "name": "Priya" }
+      }
+    }
+  ],
+  "filters": [
+    {
+      "label": "Suresh",
+      "count": 2,
+      "type": "runner",
+      "value": "runner_id_123"
+    },
+    {
+      "label": "Kiran",
+      "count": 1,
+      "type": "runner",
+      "value": "runner_id_12456"
+    }
+  ],
+  "nextPageToken": "cursor_assigned"
+}

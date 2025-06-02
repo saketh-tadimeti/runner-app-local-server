@@ -2,6 +2,7 @@ const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const jwt = require('jsonwebtoken');
+const SimpleJsonDB = require('simple-json-db');
 
 const app = express();
 app.use(express.json());
@@ -9,6 +10,106 @@ app.use(express.json());
 // Helper to load mock JSON
 function loadMock(filename) {
     return JSON.parse(fs.readFileSync(path.join(__dirname, 'mock-jsons', filename), 'utf8'));
+}
+
+const db = new SimpleJsonDB(path.join(__dirname, 'mock-jsons', 'db.json'));
+
+// Helper to generate mock runners
+function generateRunners(count) {
+    return Array.from({ length: count }).map((_, i) => ({
+        id: `runner_${i + 1}`,
+        name: `Runner ${i + 1}`
+    }));
+}
+
+// Helper to generate mock orders
+function generateOrders(type, count, runners, filtersAssigned = [], filtersDelivered = []) {
+    const statusMap = {
+        incoming: [
+            "ORDER_STATUS_ASSIGN_DELAYED",
+            "ORDER_STATUS_UNASSIGNED",
+            "ORDER_STATUS_REACHED",
+            "ORDER_STATUS_ARRIVING",
+            "ORDER_STATUS_INVALID"
+        ],
+        assigned: ["ORDER_STATUS_ASSIGNED", "ORDER_STATUS_PICKUP_DELAYED"],
+        delivery: [
+            "ORDER_STATUS_DELIVERED",
+            "ORDER_STATUS_CANCELLED",
+            "ORDER_STATUS_PICKED_UP",
+            "ORDER_STATUS_DELIVERY_DELAYED"
+        ]
+    };
+    const statuses = statusMap[type];
+    return Array.from({ length: count }).map((_, i) => {
+        const status = statuses[i % statuses.length];
+        let runner, runnerId, runnerName;
+        if (type === 'assigned' && filtersAssigned.length > 0) {
+            const filter = filtersAssigned[i % filtersAssigned.length];
+            runnerId = filter.value;
+            runnerName = filter.label;
+        } else if (type === 'delivery' && filtersDelivered.length > 0) {
+            const filter = filtersDelivered[i % filtersDelivered.length];
+            runnerId = filter.value;
+            runnerName = filter.label;
+        } else {
+            runner = runners[i % runners.length];
+            runnerId = runner.id;
+            runnerName = runner.name;
+        }
+        return {
+            id: `${type}_order_${i + 1}`,
+            status,
+            orderType: i % 2 === 0 ? "FOOD" : "GROCERY",
+            etaInSeconds: 300 + i * 10,
+            receivedAt: 1715598481 + i * 100,
+            assignedAt: 1715598600 + i * 100,
+            pickedUpAt: 1715598720 + i * 100,
+            pickupDetails: { name: `Pickup Place ${i + 1}` },
+            isOFOOrder: i % 2 === 0,
+            customer: {
+                name: `Customer ${i + 1}`,
+                hasAlternateNumber: i % 2 === 0,
+                address: {
+                    line1: `Address line 1 - ${i + 1}`,
+                    line2: `Address line 2 - ${i + 1}`,
+                    fullAddress: `Full address for order ${i + 1}`,
+                    landmark: `Landmark ${i + 1}`,
+                    location: {
+                        latitude: 12.9346 + i * 0.01,
+                        longitude: 77.6953 + i * 0.01
+                    }
+                }
+            },
+            items: [
+                { name: `Item A${i + 1}`, quantity: 1 + i },
+                { name: `Item B${i + 1}`, quantity: 2 }
+            ],
+            deliveryPartner: { name: runnerName, id: runnerId },
+            trackingDetails: {
+                receiver: { name: `Receiver ${i + 1}` },
+                runner: { name: runnerName, id: runnerId }
+            },
+            customerRequests: i % 2 === 0 ? ["LEAVE_WITH_SECURITY"] : [],
+            audioInstructions: i % 2 === 0 ? { url: `https://api.runner-app.com/voice-notes/ord${i + 1}.mp3` } : undefined
+        };
+    });
+}
+
+// Populate DB with mock data if empty
+if (
+    db.get('runners').length === 0 &&
+    db.get('incomingOrders').length === 0 &&
+    db.get('assignedOrders').length === 0 &&
+    db.get('deliveredOrders').length === 0
+) {
+    const runners = generateRunners(10);
+    const filtersAssigned = db.get('filtersAssigned') || [];
+    const filtersDelivered = db.get('filtersDelivered') || [];
+    db.set('runners', runners);
+    db.set('incomingOrders', generateOrders('incoming', 20, runners));
+    db.set('assignedOrders', generateOrders('assigned', 20, runners, filtersAssigned, filtersDelivered));
+    db.set('deliveredOrders', generateOrders('delivery', 20, runners, filtersAssigned, filtersDelivered));
 }
 
 // SendVerificationCode endpoint
@@ -122,21 +223,7 @@ app.get('/api/v1/runners/roles', (req, res) => {
     });
 });
 
-//
-// write api integration for this
-// path - api/v1/runners/login
-// request body
-// {
-//   "role": "runner" // or  "handler"
-// }
-// response body
-// {
-//   "statusCode": 200,
-//   "statusMessage": "OK",
-//   "data": {
-//     "message": "Role updated successfully",
-//   }
-// }
+
 
 app.post('/api/v1/runners/login', (req, res) => {
     const response = loadMock('login.json');
@@ -164,8 +251,18 @@ app.get('/api/v1/runners/home', (req, res) => {
 });
 
 app.post('/api/v1/runners/duty/state', (req, res) => {
-    const response = loadMock('duty.json');
-    res.json(response);
+    const { state } = req.body;
+
+    res.json({
+        "statusCode": 200,
+        "statusMessage": "OK",
+        "data": {
+            "status": state
+        }
+    }
+    );
+    // const response = loadMock('duty.json');
+    // res.json(response);
 });
 
 // Receive Order endpoint
@@ -197,6 +294,77 @@ app.post('/api/v1/runners/orders/receive', (req, res) => {
         statusMessage: "Order marked as received",
         data: {
             receviedOrder
+        }
+    });
+});
+
+// Paginated order listing endpoint
+app.post('/api/v1/runners/orders', (req, res) => {
+    const { type, offset = 0, pageSize = 10, filters: reqFilters = [] } = req.body;
+    if (!type || !['incoming', 'assigned', 'delivery'].includes(type)) {
+        return res.status(400).json({ statusCode: 400, statusMessage: 'Invalid or missing type', data: null });
+    }
+    const offsetNum = Number(offset);
+    const pageSizeNum = Number(pageSize);
+    if (isNaN(offsetNum) || isNaN(pageSizeNum) || offsetNum < 0 || pageSizeNum <= 0) {
+        // return res.status(400).json({ statusCode: 400, statusMessage: 'Invalid offset or pageSize', data: null });
+    }
+
+    let orders = [];
+    let filters = [];
+    if (type === 'incoming') {
+        orders = db.get('incomingOrders');
+        filters = db.get('filtersIncoming');
+    } else if (type === 'assigned') {
+        orders = db.get('assignedOrders');
+        filters = db.get('filtersAssigned');
+    } else if (type === 'delivery') {
+        orders = db.get('deliveredOrders');
+        filters = db.get('filtersDelivered');
+    }
+    // Always use the full dataset for metadata
+    const totalOrders = orders.length;
+    // Apply filters from request only to the orders list
+    let filteredOrders = orders;
+    if (Array.isArray(reqFilters) && reqFilters.length > 0) {
+        reqFilters.forEach(f => {
+            if (f.type === 'status') {
+                if (type === 'incoming') {
+                    // Map UI status filter to order statuses
+                    let statusList = [];
+                    if (f.value === 'ORDER_RECEIVED') {
+                        statusList = ['ORDER_STATUS_ASSIGN_DELAYED', 'ORDER_STATUS_UNASSIGNED'];
+                    } else if (f.value === 'ARRIVED') {
+                        statusList = ['ORDER_STATUS_REACHED'];
+                    } else if (f.value === 'ON_THE_WAY') {
+                        statusList = ['ORDER_STATUS_ARRIVING'];
+                    } else {
+                        statusList = [f.value];
+                    }
+                    filteredOrders = filteredOrders.filter(o => statusList.includes(o.status));
+                } else {
+                    filteredOrders = filteredOrders.filter(o => o.status === f.value);
+                }
+            } else if (f.type === 'runner') {
+                filteredOrders = filteredOrders.filter(o =>
+                    o.trackingDetails.runner.id === f.value
+                );
+            }
+        });
+    }
+    const paginatedOrders = filteredOrders.slice(offsetNum, offsetNum + pageSizeNum);
+    let nextPageToken = null;
+    if (offsetNum + pageSizeNum < filteredOrders.length) {
+        nextPageToken = String(offsetNum + pageSizeNum);
+    }
+    res.json({
+        statusCode: 200,
+        statusMessage: "Eligible runners fetched successfully",
+        data: {
+            totalOrders,
+            orders: paginatedOrders,
+            filters,
+            nextPageToken,
         }
     });
 });

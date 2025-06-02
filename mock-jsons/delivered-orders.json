@@ -1,0 +1,138 @@
+{
+  "totalOrders": 4,
+  "orders": [
+    {
+      "id": "order_delivered_1",
+      "status": "ORDER_STATUS_DELIVERED",
+      "orderType": "FOOD",
+      "etaInSeconds": 0,
+      "receivedAt": 1715600481,
+      "assignedAt": 1715600600,
+      "pickedUpAt": 1715600720,
+      "pickupDetails": { "name": "Cafe Coffee Day" },
+      "isOFOOrder": true,
+      "customer": {
+        "name": "Sanjana",
+        "hasAlternateNumber": false,
+        "address": {
+          "line1": "MG Road",
+          "line2": "1st floor, C block",
+          "fullAddress": "MG Road, Bengaluru, Karnataka 560001, India",
+          "landmark": "Near Metro Station",
+          "location": { "latitude": 12.9426, "longitude": 77.7023 }
+        }
+      },
+      "items": [{ "name": "Coffee", "quantity": 2 }],
+      "deliveryPartner": { "name": "Deepak" },
+      "trackingDetails": {
+        "receiver": { "name": "Ravi" },
+        "runner": { "name": "Sanjana" }
+      }
+    },
+    {
+      "id": "order_delivered_2",
+      "status": "ORDER_STATUS_CANCELLED",
+      "orderType": "GROCERY",
+      "etaInSeconds": 0,
+      "receivedAt": 1715600581,
+      "assignedAt": 1715600700,
+      "pickedUpAt": 1715600820,
+      "pickupDetails": { "name": "Supermart" },
+      "isOFOOrder": false,
+      "customer": {
+        "name": "Vivek",
+        "hasAlternateNumber": true,
+        "address": {
+          "line1": "Jayanagar",
+          "line2": "2nd floor, D block",
+          "fullAddress": "Jayanagar, Bengaluru, Karnataka 560041, India",
+          "landmark": "Near Jain Temple",
+          "location": { "latitude": 12.9436, "longitude": 77.7033 }
+        }
+      },
+      "items": [{ "name": "Bread", "quantity": 1 }],
+      "deliveryPartner": { "name": "Asha" },
+      "trackingDetails": {
+        "receiver": { "name": "Meena" },
+        "runner": { "name": "Vivek" }
+      }
+    },
+    {
+      "id": "order_delivered_3",
+      "status": "ORDER_STATUS_PICKED_UP",
+      "orderType": "OTHER",
+      "etaInSeconds": 0,
+      "receivedAt": 1715600681,
+      "assignedAt": 1715600800,
+      "pickedUpAt": 1715600920,
+      "pickupDetails": { "name": "Book Cafe" },
+      "isOFOOrder": true,
+      "customer": {
+        "name": "Karthik",
+        "hasAlternateNumber": false,
+        "address": {
+          "line1": "Banashankari",
+          "line2": "3rd floor, E block",
+          "fullAddress": "Banashankari, Bengaluru, Karnataka 560085, India",
+          "landmark": "Near Big Bazaar",
+          "location": { "latitude": 12.9446, "longitude": 77.7043 }
+        }
+      },
+      "items": [{ "name": "Book", "quantity": 2 }],
+      "deliveryPartner": { "name": "Rohit" },
+      "trackingDetails": {
+        "receiver": { "name": "Kavya" },
+        "runner": { "name": "Karthik" }
+      }
+    },
+    {
+      "id": "order_delivered_4",
+      "status": "ORDER_STATUS_DELIVERY_DELAYED",
+      "orderType": "FOOD",
+      "etaInSeconds": 120,
+      "receivedAt": 1715600781,
+      "assignedAt": 1715600900,
+      "pickedUpAt": 1715601020,
+      "pickupDetails": { "name": "Express Eats" },
+      "isOFOOrder": false,
+      "customer": {
+        "name": "Divya",
+        "hasAlternateNumber": true,
+        "address": {
+          "line1": "Richmond Town",
+          "line2": "4th floor, F block",
+          "fullAddress": "Richmond Town, Bengaluru, Karnataka 560025, India",
+          "landmark": "Near Hockey Stadium",
+          "location": { "latitude": 12.9456, "longitude": 77.7053 }
+        }
+      },
+      "items": [{ "name": "Pasta", "quantity": 1 }],
+      "deliveryPartner": { "name": "Naveen" },
+      "trackingDetails": {
+        "receiver": { "name": "Shreya" },
+        "runner": { "name": "Divya" }
+      }
+    }
+  ],
+  "filters": [
+    {
+      "label": "Suresh",
+      "count": 2,
+      "type": "runner",
+      "value": "runner_id_123"
+    },
+    {
+      "label": "Kiran",
+      "count": 1,
+      "type": "runner",
+      "value": "runner_id_12456"
+    },
+    {
+      "label": "Khan",
+      "count": 2,
+      "type": "runner",
+      "value": "runner_id_124567"
+    }
+  ],
+  "nextPageToken": "cursor_delivered"
+}
