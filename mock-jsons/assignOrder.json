@@ -1,0 +1,8 @@
+{
+  "statusCode": 207,
+  "statusMessage": "Runner assigned successfully",
+  "data": {
+    "assignedOrders": ["213213", "31231"],
+    "failedOrders": ["213213", "31231"]
+  }
+}

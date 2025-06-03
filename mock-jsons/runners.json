@@ -1,0 +1,99 @@
+{
+    "statusCode": 200,
+    "statusMessage": "Eligible runners fetched successfully",
+    "data": {
+      "runners": [
+        {
+          "id": "runner_456",
+          "name": "Priya",
+          "ordersToday": 5,
+          "currentlyAssigned": 0
+        },
+        {
+          "id": "runner_789",
+          "name": "Ramesh",
+          "ordersToday": 17,
+          "currentlyAssigned": 7
+        },
+        {
+          "id": "runner_012",
+          "name": "Suresh",
+          "ordersToday": 13,
+          "currentlyAssigned": 9
+        },
+        {
+          "id": "runner_4563",
+          "name": "Priya",
+          "ordersToday": 5,
+          "currentlyAssigned": 0
+        },
+        {
+          "id": "runner_7893",
+          "name": "Ramesh",
+          "ordersToday": 17,
+          "currentlyAssigned": 7
+        },
+        {
+          "id": "runner_0123",
+          "name": "Suresh",
+          "ordersToday": 13,
+          "currentlyAssigned": 9
+        },
+        {
+          "id": "runner_4566",
+          "name": "Priya",
+          "ordersToday": 5,
+          "currentlyAssigned": 0
+        },
+        {
+          "id": "runner_789786",
+          "name": "Ramesh",
+          "ordersToday": 17,
+          "currentlyAssigned": 7
+        },
+        {
+          "id": "runner_0127",
+          "name": "Suresh",
+          "ordersToday": 13,
+          "currentlyAssigned": 9
+        },
+        {
+          "id": "runner_4569",
+          "name": "Priya",
+          "ordersToday": 5,
+          "currentlyAssigned": 0
+        },
+        {
+          "id": "runner_78964",
+          "name": "Ramesh",
+          "ordersToday": 17,
+          "currentlyAssigned": 7
+        },
+        {
+          "id": "runner_01264",
+          "name": "Suresh",
+          "ordersToday": 13,
+          "currentlyAssigned": 9
+        },
+        {
+          "id": "runner_456867",
+          "name": "Priya",
+          "ordersToday": 5,
+          "currentlyAssigned": 0
+        },
+        {
+          "id": "runner_78943",
+          "name": "Ramesh",
+          "ordersToday": 17,
+          "currentlyAssigned": 7
+        },
+        {
+          "id": "runner_012543",
+          "name": "Suresh",
+          "ordersToday": 13,
+          "currentlyAssigned": 9
+        }
+      ]
+    }
+  }
+  
