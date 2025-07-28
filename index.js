@@ -191,7 +191,7 @@ app.post('/v1/token/refresh', (req, res) => {
 // SignOut endpoint
 app.post('/v1/accounts/signOut', (req, res) => {
     // SignOut just returns an empty response as per the proto
-    res.json({});
+    res.status(200).json({});
 });
 
 // Profile endpoint
@@ -510,6 +510,33 @@ app.get('/v1/runners/configs', (req, res) => {
         }
     });
 });
+app.get('/v1/runners', (req, res) => {
+    const response = loadMock('runners.json');
+    res.json(response);
+});
+
+
+app.post('/v1/runners/orders/assign', (req, res) => {
+
+    // res.status(400).json({
+    //     statusCode: 500,
+    //     statusMessage: "Internal Server Error",
+    //     data: {
+    //         message: "Internal Server Error"
+    //     }
+    // });
+    // return
+
+
+    const response = loadMock('assignOrder.json');
+    res.json(response);
+});
+
+app.get('/v1/runners/orders/:orderId', (req, res) => {
+    const response = loadMock('orderDetails.json');
+    res.json(response);
+});
+
 
 const PORT = 5000;
 app.listen(PORT, () => {

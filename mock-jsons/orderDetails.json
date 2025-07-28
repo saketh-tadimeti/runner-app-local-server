@@ -1,0 +1,66 @@
+{
+    "statusCode": 200,
+    "statusMessage": "Order details retrieved successfully",
+    "data": {
+      "order": {
+        "id": "123456789013456",
+        "status": "DELIVERY_DELAYED",
+        "orderType": "FOOD",
+        "etaInSeconds": 420,
+        "receivedAt": 1715598481,
+        "assignedAt": 1715598600,
+        "pickedUpAt": 1715598720,
+        "pickupDetails": {
+          "name": "Spice Junction"
+        },
+        "isOFOOrder": true,
+        "customer": {
+          "name": "Sowmya",
+          "hasAlternateNumber": true,
+          "address": {
+            "line1": "Embassy Tech Village",
+            "line2": "1st floor, I and J block",
+            "fullAddress": "Mela building Vanganahalli, 1st Sector, HSR Layout, Bengaluru, Karnataka 560102, India",
+            "landmark": "Near vasudev addiga, HSR layout",
+            "location": {
+              "latitude": 12.9346,
+              "longitude": 77.6953
+            }
+          }
+        },
+        "items": [
+          {
+            "name": "Peri Peri Chicken with Egg corn rice",
+            "quantity": 1,
+            "addOns": "Med fries",
+            "varaint": "Half"
+          },
+          {
+            "name": "Kesariya Rasamalai",
+            "quantity": 1
+          },
+          {
+            "name": "Tandoori Roti",
+            "quantity": 4
+          }
+        ],
+        "deliveryPartner": {
+          "name": "Omkar Tendulkar"
+        },
+        "trackingDetails": {
+          "receiver": {
+            "name": "Manish Kumar"
+          },
+          "runner": {
+            "name": "Kavita"
+          }
+        },
+        "customerRequests": [
+          "LEAVE_WITH_SECURITY"
+        ],
+        "audioInstructions": {
+          "url": "https://api.runner-app.com/voice-notes/ord123.mp3"
+        }
+      }
+    }
+  }
