@@ -1,5 +1,5 @@
 {
   "statusCode": 200,
   "statusMessage": "OK",
-  "data": ["runner", "handler"]
+  "data": ["ROLE_RUNNER", "ROLE_HANDLER"]
 }

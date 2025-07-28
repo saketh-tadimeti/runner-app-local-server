@@ -113,7 +113,7 @@ if (
 }
 
 // SendVerificationCode endpoint
-app.post('/v1/accounts/sendVerificationCode', (req, res) => {
+app.post('/v2/accounts/sendVerificationCode', (req, res) => {
     // return non 2xx response
     res.json({
         user_id: "162982dc5ae1627408985dd1e2859225f4e04d8c19120186e253258c8d1d9f92825b61",
@@ -136,14 +136,6 @@ app.post('/v1/accounts/signInWithOTP', (req, res) => {
     const access_token = jwt.sign(payload, secret, { expiresIn });
 
 
-    // return non 2xx response
-    res.json({
-        error: "dummy_error",
-        error_description: "dummy_error_description"
-    });
-
-    return
-
     res.json({
         access_token,
         refresh_token: "dummy_refresh_token",
@@ -158,6 +150,8 @@ app.post('/v1/accounts/signInWithPhoneNumber', (req, res) => {
         name: "Saket tadimeti",
         roles: ["DP"],
         sub: "21",
+        // random session_id
+        session_id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     };
     const secret = "dummy_secret";
     const expiresIn = 60 * 10; // 10 minutes in seconds
@@ -178,6 +172,7 @@ app.post('/v1/token/refresh', (req, res) => {
         name: "Saket tadimeti",
         roles: ["DP"],
         sub: "21",
+        session_id: Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15),
     };
     const secret = "dummy_secret";
     const expiresIn = 60 * 10; // 10 minutes in seconds
@@ -200,13 +195,13 @@ app.post('/v1/accounts/signOut', (req, res) => {
 });
 
 // Profile endpoint
-app.get('/api/v1/runners/profile', (req, res) => {
+app.get('/v1/runners/profile', (req, res) => {
     const response = loadMock('profile.json');
     res.json(response);
 });
 
 // Roles endpoint
-app.get('/api/v1/runners/roles', (req, res) => {
+app.get('/v1/runners/roles', (req, res) => {
     // return 404 with message
 
     // res.status(404).json({
@@ -219,13 +214,13 @@ app.get('/api/v1/runners/roles', (req, res) => {
     res.json({
         statusCode: 200,
         statusMessage: "OK",
-        data: { roles: ["runner"] }
+        data: { roles: ["ROLE_RUNNER", "ROLE_HANDLER"] }
     });
 });
 
 
 
-app.post('/api/v1/runners/login', (req, res) => {
+app.post('/v1/runners/login-with-role', (req, res) => {
     const response = loadMock('login.json');
     // return 404 with message
     // res.status(404).json({
@@ -238,7 +233,7 @@ app.post('/api/v1/runners/login', (req, res) => {
 });
 
 // Home feature endpoint
-app.get('/api/v1/runners/home', (req, res) => {
+app.get('/v1/runners/home', (req, res) => {
     // return 404 with message
     // res.status(500).json({
     //     statusCode: 500,
@@ -250,7 +245,7 @@ app.get('/api/v1/runners/home', (req, res) => {
     res.json(response);
 });
 
-app.post('/api/v1/runners/duty/state', (req, res) => {
+app.post('/v1/runners/duty/state', (req, res) => {
     const { state } = req.body;
 
     res.json({
@@ -266,7 +261,7 @@ app.post('/api/v1/runners/duty/state', (req, res) => {
 });
 
 // Receive Order endpoint
-app.post('/api/v1/runners/orders/receive', (req, res) => {
+app.post('/v1/runners/orders/receive', (req, res) => {
     const code = req.body.code || "000000";
     // For mock, prepend a fixed prefix to the code to form the order id
     const receviedOrder = `1231212${code}`;
@@ -299,7 +294,7 @@ app.post('/api/v1/runners/orders/receive', (req, res) => {
 });
 
 // Paginated order listing endpoint
-app.post('/api/v1/runners/orders', (req, res) => {
+app.post('/v1/runners/orders', (req, res) => {
     const { type, offset = 0, pageSize = 10, filters: reqFilters = [] } = req.body;
     if (!type || !['incoming', 'assigned', 'delivery'].includes(type)) {
         return res.status(400).json({ statusCode: 400, statusMessage: 'Invalid or missing type', data: null });
@@ -361,10 +356,157 @@ app.post('/api/v1/runners/orders', (req, res) => {
         statusCode: 200,
         statusMessage: "Eligible runners fetched successfully",
         data: {
-            totalOrders,
+            // totalOrders: type === 'assigned' ? 0 : totalOrders,
+            // orders: type === 'assigned' ? [] : paginatedOrders,
+            // filters: type === 'assigned' ? [] : filters,
+            // nextPageToken,
+
+            totalOrders: totalOrders,
             orders: paginatedOrders,
-            filters,
+            filters: filters,
             nextPageToken,
+        }
+    });
+});
+
+// Search orders endpoint
+app.post('/v1/runners/orders/search', (req, res) => {
+    const term = (req.body.term || '').toLowerCase();
+    const incoming = db.get('incomingOrders') || [];
+    const assigned = db.get('assignedOrders') || [];
+    const delivered = db.get('deliveredOrders') || [];
+    let allOrders = [...incoming, ...assigned, ...delivered];
+    let results;
+    if (!term) {
+        results = allOrders;
+    } else {
+        results = allOrders.filter(order => {
+            const customerName = (order.customer && order.customer.name || '').toLowerCase();
+            const orderId = (order.id || '').toLowerCase();
+            return customerName.includes(term) || orderId.includes(term);
+        });
+    }
+    // res.status(400).json({
+    //     statusCode: 400,
+    //     statusMessage: 'Invalid search term',
+    //     data: null
+    // });
+    // return
+    res.json({
+        statusCode: 200,
+        statusMessage: 'Search complete',
+        data: { orders: results }
+    });
+});
+
+// Call API endpoint
+app.post('/v1/runners/call', (req, res) => {
+    const { callTarget, receiverType } = req.body;
+    // Define valid cases and their numbers
+    const cases = {
+        'CUSTOMER-PRIMARY': '+91919123210',
+        'CUSTOMER-ALTERNATE': '+91299123211',
+        'CUSTOMER-SENDER': '+91939123212',
+        'RUNNER-PRIMARY': '+91949123213',
+        'RECEIVER-PRIMARY': '+91959123214',
+        'DE-PRIMARY': '+91969123215',
+        'HUB_MANAGER-PRIMARY': '+91979123216',
+    };
+    let key = '';
+    console.log(callTarget, receiverType);
+    if (callTarget === 'CUSTOMER') {
+        if (!receiverType) {
+            return res.status(400).json({
+                statusCode: 400,
+                statusMessage: 'receiverType is required for CUSTOMER',
+                data: null
+            });
+        }
+        key = `CUSTOMER-${receiverType.toUpperCase()}`;
+    } else if (['RUNNER', 'RECEIVER', 'DE', 'HUB_MANAGER'].includes(callTarget)) {
+        key = `${callTarget}-PRIMARY`;
+    } else {
+        return res.status(400).json({
+            statusCode: 400,
+            statusMessage: 'Invalid callTarget',
+            data: null
+        });
+    }
+    console.log(key);
+    if (!cases[key]) {
+        return res.status(400).json({
+            statusCode: 400,
+            statusMessage: 'Invalid callTarget/receiverType combination',
+            data: null
+        });
+    }
+    res.json({
+        statusCode: 200,
+        statusMessage: 'success',
+        data: {
+            virtualNumber: cases[key]
+        }
+    });
+});
+
+// Update order status endpoint
+app.post('/v1/runners/orders/:orderId/status', (req, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+    if (!['PICKED_UP', 'DELIVERED'].includes(status)) {
+        return res.status(400).json({
+            statusCode: 400,
+            statusMessage: 'Invalid status',
+            data: null
+        });
+    }
+    res.json({
+        statusCode: 200,
+        statusMessage: 'Order status updated successfully',
+        data: {
+            orderId,
+            status
+        }
+    });
+});
+
+// Logout endpoint
+app.post('/v1/runners/logout', (req, res) => {
+    const { errorCode = "" } = req.body;
+    if (errorCode === 'USER_ONLINE' || errorCode === 'INVALID_TOKEN') {
+        return res.status(400).json({
+            statusCode: 400,
+            statusMessage: 'Bad Request',
+            data: null,
+            errorCode
+        });
+    }
+    // if (errorCode === 'INTERNAL') {
+    //     return res.status(500).json({
+    //         statusCode: 500,
+    //         statusMessage: 'Internal Server Error',
+    //         data: null
+    //     });
+    // }
+    res.json({
+        statusCode: 200,
+        statusMessage: 'OK',
+        data: {
+            message: 'Logged out successfully'
+        }
+    });
+});
+
+// Configs endpoint
+app.get('/v1/runners/configs', (req, res) => {
+    res.json({
+        statusCode: 200,
+        statusMessage: "Success",
+        data: {
+            experiments: {},
+            flags: {
+                minAppVersion: 1
+            }
         }
     });
 });

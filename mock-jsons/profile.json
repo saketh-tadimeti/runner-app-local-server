@@ -1,19 +1,29 @@
 {
-  "statusCode": 200,
-  "statusMessage": "OK",
+  "statusCode": "SUCCESS",
+  "statusMessage": "Runner profile fetched successfully",
   "data": {
-    "name": "Daudiyaal Kumar",
-    "runnerId": "237492",
-    "status": "online",
-    "hubManager": {
-      "name": "Manager Saab"
+    "currentStatus": "DUTY_STATUS_OFF_DUTY",
+    "hubDetails": {
+      "id": "hub-123",
+      "name": "Test Hub",
+      "address": "123 Test Street, Test City",
+      "location": {
+        "latitude": 12.9716,
+        "longitude": 77.5946
+      },
+      "operatingHours": {
+        "start": "09:00",
+        "end": "18:00"
+      }
     },
-    "workDetails": {
-      "startTime": "10:00 AM",
-      "endTime": "6:00 PM",
-      "address": "Tower 8, DLF Cyberhub, Gurgaon",
-      "lat": "12.01",
-      "long": "12.02"
+    "runner": {
+      "id": "runner-456",
+      "name": "John Doe",
+      "phone_number": "+1234567890",
+      "type": "RUNNER_CX"
+    },
+    "hubManager": {
+      "name": "Manager Name"
     }
   }
 }

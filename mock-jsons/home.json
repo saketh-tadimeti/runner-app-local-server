@@ -1,18 +1,36 @@
 {
-  "statusCode": 200,
-  "statusMessage": "OK",
+  "statusCode": "SUCCESS",
+  "statusMessage": "Home fetched successfully",
   "data": {
-    "status": "offline",
+    "runner": {
+      "id": "11",
+      "name": "msk",
+      "phoneNumber": "7483683411",
+      "type": "RUNNER_TYPE_CX",
+      "opsTiming": {
+        "startTime": null,
+        "endTime": null
+      },
+      "allowedRoles": ["ROLE_RUNNER", "ROLE_HANDLER"],
+      "employmentStatus": "EMPLOYMENT_STATUS_ACTIVE",
+      "hubId": "11",
+      "cityId": "94547",
+      "currentRole": "ROLE_RUNNER",
+      "currentDutyStatus": "DUTY_STATUS_OFF_DUTY",
+      "createdAt": "2025-07-24T06:41:59.842935975Z",
+      "updatedAt": "2025-07-24T06:41:59.842935975Z"
+    },
     "hub": {
-      "name": "Tower B, DLF Cyberhub",
-      "address": "Gurgaon, Haryana",
+      "id": "11",
+      "name": "Hub 3",
+      "address": "test",
       "location": {
-        "lat": 28.4975,
-        "lng": 77.0896
+        "latitude": 12.931750975448026,
+        "longitude": 77.69073963469415
       },
       "operatingHours": {
-        "start": "08:00",
-        "end": "22:00"
+        "start": "09:00",
+        "end": "23:59"
       }
     }
   }
